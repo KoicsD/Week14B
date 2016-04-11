@@ -5,6 +5,9 @@ namespace TextToNumeralConverter  // Exercise 3
 {
     public class Converter
     {
+        // TODO processing string word-by-word
+        // TODO how about processing simple char or array of chars?
+
         static Dictionary<char, string> numberLookup;
 
         static Converter()

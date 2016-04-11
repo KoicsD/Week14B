@@ -4,6 +4,9 @@ namespace TextToNumeralConverter  // Exercise 3
 {
     class Program
     {
+        // TODO processing text from command-line argument
+        // TODO how about processing files given as command-line arguments
+
         static int AskForPosInt(string prompt)
         {
             int value;
