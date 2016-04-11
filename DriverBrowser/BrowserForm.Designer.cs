@@ -30,7 +30,7 @@
         {
             this.pathBox = new System.Windows.Forms.TextBox();
             this.driveBox = new System.Windows.Forms.ComboBox();
-            this.listBox1 = new System.Windows.Forms.ListBox();
+            this.listBox = new System.Windows.Forms.ListBox();
             this.openButton = new System.Windows.Forms.Button();
             this.deleteButton = new System.Windows.Forms.Button();
             this.driveLabel = new System.Windows.Forms.Label();
@@ -39,6 +39,7 @@
             // 
             // pathBox
             // 
+            this.pathBox.Enabled = false;
             this.pathBox.Location = new System.Drawing.Point(236, 58);
             this.pathBox.Name = "pathBox";
             this.pathBox.Size = new System.Drawing.Size(316, 20);
@@ -51,14 +52,15 @@
             this.driveBox.Name = "driveBox";
             this.driveBox.Size = new System.Drawing.Size(316, 21);
             this.driveBox.TabIndex = 1;
+            this.driveBox.SelectedIndexChanged += new System.EventHandler(this.driveBox_SelectedIndexChanged);
             // 
-            // listBox1
+            // listBox
             // 
-            this.listBox1.FormattingEnabled = true;
-            this.listBox1.Location = new System.Drawing.Point(12, 101);
-            this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(540, 173);
-            this.listBox1.TabIndex = 2;
+            this.listBox.FormattingEnabled = true;
+            this.listBox.Location = new System.Drawing.Point(12, 101);
+            this.listBox.Name = "listBox";
+            this.listBox.Size = new System.Drawing.Size(540, 173);
+            this.listBox.TabIndex = 2;
             // 
             // openButton
             // 
@@ -107,7 +109,7 @@
             this.Controls.Add(this.driveLabel);
             this.Controls.Add(this.deleteButton);
             this.Controls.Add(this.openButton);
-            this.Controls.Add(this.listBox1);
+            this.Controls.Add(this.listBox);
             this.Controls.Add(this.driveBox);
             this.Controls.Add(this.pathBox);
             this.Name = "BrowserForm";
@@ -121,7 +123,7 @@
 
         private System.Windows.Forms.TextBox pathBox;
         private System.Windows.Forms.ComboBox driveBox;
-        private System.Windows.Forms.ListBox listBox1;
+        private System.Windows.Forms.ListBox listBox;
         private System.Windows.Forms.Button openButton;
         private System.Windows.Forms.Button deleteButton;
         private System.Windows.Forms.Label driveLabel;
