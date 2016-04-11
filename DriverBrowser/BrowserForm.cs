@@ -7,8 +7,10 @@ namespace DriverBrowser
     public partial class BrowserForm : Form
     {
         DriveInfo[] drives;
-        int selectedIndex;
         DirectoryInfo selectedDirectory;
+        object[] items;
+        int selectedDriveIndex;
+        int selectedItemIndex;
 
         static void CopyArray(object[] src, out object[] dest)
         {
@@ -29,29 +31,20 @@ namespace DriverBrowser
             InitializeComponent();
             drives = DriveInfo.GetDrives();
             driveBox.DataSource = drives;
-            selectedIndex = driveBox.SelectedIndex;
+            selectedDriveIndex = driveBox.SelectedIndex;
             driveBox.DropDownStyle = ComboBoxStyle.DropDownList;
         }
 
         private void refreshListBox()
         {
             pathBox.Text = selectedDirectory.FullName;
-            ArrayList items = new ArrayList(selectedDirectory.GetDirectories());
+            ArrayList items = new ArrayList();
+            if (selectedDirectory.Parent != null)
+                items.Add("..");
+            items.AddRange(selectedDirectory.GetDirectories());
             items.AddRange(selectedDirectory.GetFiles());
-            listBox.DataSource = items.ToArray();
-            if (items.Count > 0)
-            {
-                if (listBox.SelectedItem is DirectoryInfo)
-                    openButton.Enabled = true;
-                else
-                    openButton.Enabled = false;
-                deleteButton.Enabled = true;
-            }
-            else
-            {
-                openButton.Enabled = false;
-                deleteButton.Enabled = false;
-            }
+            this.items = items.ToArray();
+            listBox.DataSource = this.items;
         }
 
         private void driveBox_SelectedIndexChanged(object sender, System.EventArgs e)
@@ -60,17 +53,44 @@ namespace DriverBrowser
             if (!selectedDrive.IsReady)
             {
                 MessageBox.Show("Driver is not ready! Please choose another one!");
-                driveBox.SelectedIndex = selectedIndex;
+                driveBox.SelectedIndex = selectedDriveIndex;
                 return;
             }
             selectedDirectory = selectedDrive.RootDirectory;
             refreshListBox();
-            selectedIndex = driveBox.SelectedIndex;
+            selectedDriveIndex = driveBox.SelectedIndex;
+        }
+
+        private void listBox_SelectedIndexChanged(object sender, System.EventArgs e)
+        {
+            if (items.Length > 0)
+            {
+                if (listBox.SelectedItem.Equals(".."))
+                    deleteButton.Enabled = false;
+                else
+                    deleteButton.Enabled = true;
+                if (listBox.SelectedItem is FileInfo)
+                    openButton.Enabled = false;
+                else openButton.Enabled = true;
+            }
+            else
+            {
+                openButton.Enabled = false;
+                deleteButton.Enabled = false;
+            }
+            selectedItemIndex = listBox.SelectedIndex;
         }
 
         private void openButton_Click(object sender, System.EventArgs e)
         {
-            selectedDirectory = (DirectoryInfo)listBox.SelectedItem;
+            if (listBox.SelectedItem is DirectoryInfo)
+            {
+                selectedDirectory = (DirectoryInfo)listBox.SelectedItem;
+            }
+            else if (listBox.SelectedItem.Equals(".."))
+            {
+                selectedDirectory = selectedDirectory.Parent;
+            }
             refreshListBox();
         }
     }
