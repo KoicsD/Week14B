@@ -7,6 +7,9 @@ namespace DriverBrowser
 {
     public partial class BrowserForm : Form
     {
+        // TODO how about adding a button to jump to root
+        // TODO if driver is not ready it jumps to root -- awful behaviour
+
         DriveInfo[] drives;
         DirectoryInfo selectedDirectory;
         object[] items;
