@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.IO;
 using System.Windows.Forms;
 
@@ -37,7 +38,6 @@ namespace DriverBrowser
 
         private void refreshListBox()
         {
-            pathBox.Text = selectedDirectory.FullName;
             ArrayList items = new ArrayList();
             if (selectedDirectory.Parent != null)
                 items.Add("..");
@@ -45,6 +45,7 @@ namespace DriverBrowser
             items.AddRange(selectedDirectory.GetFiles());
             this.items = items.ToArray();
             listBox.DataSource = this.items;
+            pathBox.Text = selectedDirectory.FullName;
         }
 
         private void driveBox_SelectedIndexChanged(object sender, System.EventArgs e)
@@ -91,7 +92,14 @@ namespace DriverBrowser
             {
                 selectedDirectory = selectedDirectory.Parent;
             }
-            refreshListBox();
+            try
+            {
+                refreshListBox();
+            }
+            catch (UnauthorizedAccessException)
+            {
+                MessageBox.Show("Access Dennied!");
+            }
         }
     }
 }
