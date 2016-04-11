@@ -51,6 +51,26 @@ namespace DriverBrowser
             pathBox.Text = selectedDirectory.FullName;
         }
 
+        private void openDirectory()
+        {
+            if (listBox.SelectedItem is DirectoryInfo)
+            {
+                selectedDirectory = (DirectoryInfo)listBox.SelectedItem;
+            }
+            else if (listBox.SelectedItem.Equals(".."))
+            {
+                selectedDirectory = selectedDirectory.Parent;
+            }
+            try
+            {
+                refreshListBox();
+            }
+            catch (UnauthorizedAccessException)
+            {
+                MessageBox.Show("Access Dennied!");
+            }
+        }
+
         private void driveBox_SelectedIndexChanged(object sender, System.EventArgs e)
         {
             DriveInfo selectedDrive = (DriveInfo)driveBox.SelectedItem;
@@ -87,22 +107,19 @@ namespace DriverBrowser
 
         private void openButton_Click(object sender, System.EventArgs e)
         {
-            if (listBox.SelectedItem is DirectoryInfo)
-            {
-                selectedDirectory = (DirectoryInfo)listBox.SelectedItem;
-            }
-            else if (listBox.SelectedItem.Equals(".."))
-            {
-                selectedDirectory = selectedDirectory.Parent;
-            }
-            try
-            {
-                refreshListBox();
-            }
-            catch (UnauthorizedAccessException)
-            {
-                MessageBox.Show("Access Dennied!");
-            }
+            openDirectory();
+        }
+
+        private void listBox_DoubleClick(object sender, EventArgs e)
+        {
+            if (openButton.Enabled)
+                openDirectory();
+        }
+
+        private void listBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter && openButton.Enabled)
+                openDirectory();
         }
     }
 }

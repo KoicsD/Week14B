@@ -62,6 +62,8 @@
             this.listBox.Size = new System.Drawing.Size(540, 173);
             this.listBox.TabIndex = 2;
             this.listBox.SelectedIndexChanged += new System.EventHandler(this.listBox_SelectedIndexChanged);
+            this.listBox.DoubleClick += new System.EventHandler(this.listBox_DoubleClick);
+            this.listBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.listBox_KeyDown);
             // 
             // openButton
             // 
