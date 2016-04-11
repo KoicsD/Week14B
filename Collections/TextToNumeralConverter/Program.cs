@@ -1,15 +1,37 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace TextToNumeralConverter
+namespace TextToNumeralConverter  // Exercise 3
 {
     class Program
     {
+        static int AskForPosInt(string prompt)
+        {
+            int value;
+            do
+            {
+                Console.Write(prompt + " ");
+            } while (!(int.TryParse(Console.ReadLine(), out value) && value > 0));
+            return value;
+        }
+
+        static string AskForText(int length)
+        {
+            string text = "";
+            for (int i = 0; i < length; ++i)
+            {
+                Console.Write("Line {0}: ", i + 1);
+                text += Console.ReadLine() + "\n";
+            }
+            return text;
+        }
+
         static void Main(string[] args)
         {
+            int numberOfLines = AskForPosInt("How many lines would you like to write?");
+            string textToConvert = AskForText(numberOfLines);
+            string textConverted = Converter.Convert(textToConvert);
+            Console.WriteLine("Your text after digit-to numeral conversion:");
+            Console.Write(textConverted);
         }
     }
 }
