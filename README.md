@@ -3,3 +3,7 @@
 It contains 2 solutions:
 * Collections-related mini-projects
 * Driver-Browser
+
+You can find descriptions here:
+* [Collections](Collections/Description.md)
+* [DriverBrowser](DriverBrowser/)
