@@ -11,6 +11,7 @@ namespace DriverBrowser
         // TODO if driver is not ready it jumps to root -- awful behaviour
         // TODO how about adding a button to jump to root
         // TODO how about enabling user to insert path into pathBox
+        // TODO exploit parameter 'capture' in method 'MessageBox.Show', inspecting messages.
         // TODO refactor casting -- both DirectoryInfo and FileInfo extends FileSystemInfo
 
         DriveInfo[] drives;
