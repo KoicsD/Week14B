@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Collections;
 using System.IO;
+using System.Security;
 using System.Windows.Forms;
 
 namespace DriverBrowser
 {
     public partial class BrowserForm : Form
     {
-        // TODO how about adding a button to jump to root
         // TODO if driver is not ready it jumps to root -- awful behaviour
+        // TODO how about adding a button to jump to root
+        // TODO how about enabling user to insert path into pathBox
+        // TODO refactor casting -- both DirectoryInfo and FileInfo extends FileSystemInfo
 
         DriveInfo[] drives;
         DirectoryInfo selectedDirectory;
@@ -71,6 +74,79 @@ namespace DriverBrowser
             }
         }
 
+        private bool TryDeleteFile(FileInfo file)
+        {
+            try
+            {
+                file.Delete();
+                return true;
+            }
+            catch (IOException)
+            {
+                MessageBox.Show("The file cannot be deleted because it is either open or referenced by an open handle.");
+            }
+            catch (SecurityException)
+            {
+                MessageBox.Show("Access dennied!");
+            }
+            return false;
+        }
+
+        private bool TryDeleteDirectoryRecursively(DirectoryInfo dir)
+        {
+            try
+            {
+                dir.Delete(true);
+                return true;
+            }
+            catch (UnauthorizedAccessException)
+            {
+                MessageBox.Show("The directory cannot be deleted because it contains one or more read-only files.");
+            }
+            catch (IOException)
+            {
+                string message = "The directory cannot be deleted.\nPossible reasons:\n";
+                message += "- The directory is the current application's working directory.\n";
+                message += "- The directory is open or referenced by an open handle.\n";
+                MessageBox.Show(message, "capture");
+            }
+            catch (SecurityException)
+            {
+                MessageBox.Show("Access dennied!");
+            }
+            return false;
+        }
+
+        private bool TryDeleteDirectory(DirectoryInfo dir)
+        {
+            try
+            {
+                dir.Delete();
+                return true;
+            }
+            catch (UnauthorizedAccessException)
+            {
+                MessageBox.Show("The directory cannot be deleted because it contains one or more read-only files.");
+            }
+            catch (IOException)
+            {
+                string message = "The directory cannot be deleted.\nPossible reasons:\n";
+                message += "- The directory is not empty. If this case, you can delete it in the recursive way.\n";
+                message += "- The directory is the current application's working directory.\n";
+                message += "- The directory is open or referenced by an open handle.\n";
+                message += "\n";
+                message += "Would you like to retry it recursively?";
+                DialogResult result = MessageBox.Show(message, "capture", MessageBoxButtons.RetryCancel);
+                if (result.Equals(DialogResult.Retry))
+                    return TryDeleteDirectoryRecursively(dir);
+            }
+            catch (SecurityException)
+            {
+                MessageBox.Show("Access dennied!");
+            }
+            return false;
+        }
+
         private void driveBox_SelectedIndexChanged(object sender, System.EventArgs e)
         {
             DriveInfo selectedDrive = (DriveInfo)driveBox.SelectedItem;
@@ -105,9 +181,27 @@ namespace DriverBrowser
             selectedItemIndex = listBox.SelectedIndex;
         }
 
-        private void openButton_Click(object sender, System.EventArgs e)
+        private void openButton_Click(object sender, EventArgs e)
         {
             openDirectory();
+        }
+
+        private void deleteButton_Click(object sender, EventArgs e)
+        {
+            if (listBox.SelectedItem is DirectoryInfo)
+            {
+                DirectoryInfo dir = (DirectoryInfo)listBox.SelectedItem;
+                DialogResult result = MessageBox.Show("Do you surely want to delete this directory?", "", MessageBoxButtons.YesNo);
+                if (result.Equals(DialogResult.Yes))
+                    TryDeleteDirectory(dir);
+            }
+            if (listBox.SelectedItem is FileInfo)
+            {
+                FileInfo file = (FileInfo)listBox.SelectedItem;
+                DialogResult result = MessageBox.Show("Do you surely want to delete this directory?", "", MessageBoxButtons.YesNo);
+                if (result.Equals(DialogResult.Yes))
+                    TryDeleteFile(file);
+            }
         }
 
         private void listBox_DoubleClick(object sender, EventArgs e)
